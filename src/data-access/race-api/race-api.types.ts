@@ -1,3 +1,11 @@
+export enum RequestMethod {
+  Get = 'GET',
+  Put = 'PUT',
+  Post = 'POST',
+  Patch = 'PATCH',
+  Delete = 'DELETE',
+}
+
 export interface CarDto {
   id: number;
   name: string;
@@ -13,6 +21,28 @@ export interface UpdateCarRequestDto {
 export interface CreateCarRequestDto {
   name: string;
   color: string;
+}
+
+export interface GetCarParams {
+  id: number;
+}
+
+export interface GetCarsParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface DeleteCarParams {
+  id: number;
+}
+
+export interface StartStopCarParams {
+  id: number;
+  status: 'started' | 'stopped';
+}
+
+export interface SteCarToDriveModeParams {
+  id: number;
 }
 
 export interface EngineDto {
@@ -36,4 +66,19 @@ export interface UpdateWinnerRequestDto {
   id: number;
   wins: number;
   time: number;
+}
+
+export interface GetWinnersParams {
+  page?: number;
+  limit?: number;
+  sort?: 'id' | 'wins' | 'time';
+  order?: 'ASC' | 'DESC';
+}
+
+export interface GetWinnerParams {
+  id: number;
+}
+
+export interface DeleteWinnerParams {
+  id: number;
 }
