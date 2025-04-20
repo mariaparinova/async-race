@@ -61,14 +61,15 @@ class WinnersPage {
         { cellContent: `${index + 1}` },
         { cellContent: carElem },
         { cellContent: car.name },
-        { cellContent: winner.wins },
-        { cellContent: winner.time },
+        { cellContent: `${winner.wins}` },
+        { cellContent: `${winner.time}` },
       ];
     });
 
     const winnerCellElements = dataForTableCells.map((data) =>
       data.map((item: CellData) => this.table.getTableCellEl(item)),
     );
+
     const winnerRowsEl = winnerCellElements.map((cellEl) => this.table.getTableRowEl(cellEl));
 
     const tableBodyEl = this.contentEl.querySelector('tbody');

@@ -21,12 +21,12 @@ const winnersState = new State(initialParams);
 
 winnersState.subscribe({
   key: 'winners',
-  callback: () => winnersPage.renderWinners(),
+  callback: () => winnersPage.pagination.updateTotalItemsAmount(winnersState.values.winners.length),
 });
 
 winnersState.subscribe({
   key: 'winners',
-  callback: () => winnersPage.pagination.updateTotalItemsAmount(winnersState.values.winners.length),
+  callback: () => winnersPage.renderWinners(),
 });
 
 winnersState.subscribe({

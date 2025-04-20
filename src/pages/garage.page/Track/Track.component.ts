@@ -130,7 +130,7 @@ export default class Track {
 
   createFinishEl() {
     const flagEl = document.createElement('img');
-    flagEl.className = 'img';
+    flagEl.className = 'img flag';
     flagEl.src = './icons/flag.svg';
     flagEl.alt = 'Finish icon';
 
@@ -218,22 +218,22 @@ export default class Track {
 
   stopCar() {
     this.carEl.style.marginLeft = getComputedStyle(this.carEl).marginLeft;
-    this.carEl.style.transition = 'none'; // todo
+    this.carEl.style.transition = 'none';
   }
 
   getDistance() {
     const startPointEl = <HTMLDivElement>this.trackEl.querySelector('.start-point');
+    const finishEl = <HTMLDivElement>this.trackEl.querySelector('.finish-area');
 
-    if (!startPointEl) {
+    if (!startPointEl || !finishEl) {
       console.log('error during count distance');
     }
 
     const trackElWidth = this.trackEl.offsetWidth;
-    const startPointElWidth = startPointEl.offsetLeft;
-    const startPointElShiftLeft = startPointEl.offsetWidth;
+    const startPointWidth = startPointEl.offsetLeft + startPointEl.offsetWidth;
     const carElWidth = this.carEl.offsetWidth;
 
-    return trackElWidth - startPointElWidth - startPointElShiftLeft - carElWidth;
+    return trackElWidth - startPointWidth - carElWidth;
   }
 
   returnCarToStart() {
