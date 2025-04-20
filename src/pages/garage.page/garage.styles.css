@@ -1,0 +1,43 @@
+#app.garage {
+  background-color: #b7d6b5;
+}
+
+.garage {
+  position: relative;
+  margin-top: 12px;
+
+  .details {
+    color: #525252;
+  }
+
+  & .form {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    position: absolute;
+    top: 0;
+    left: 160px;
+    right: auto;
+
+    & .item-form {
+      display: flex;
+      align-items: flex-start;
+      width: fit-content;
+
+      &:nth-child(n + 2) {
+        margin-top: 8px;
+      }
+    }
+
+    & .item-form :nth-child(n + 2) {
+      margin-left: 6px;
+    }
+  }
+}
+
+@media screen and (max-width: 660px) {
+  .garage .form {
+    left: auto;
+    right: 12px;
+  }
+}

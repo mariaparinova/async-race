@@ -38,11 +38,12 @@ export interface DeleteCarParams {
 
 export interface StartStopCarParams {
   id: number;
-  status: 'started' | 'stopped';
+  status: 'started' | 'drive' | 'stopped';
 }
 
-export interface SteCarToDriveModeParams {
+export interface SetCarToDriveModeParams {
   id: number;
+  status: 'started' | 'drive' | 'stopped';
 }
 
 export interface EngineDto {

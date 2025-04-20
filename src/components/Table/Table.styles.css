@@ -1,0 +1,9 @@
+& .table {
+  font-family: var(--font-inter), serif;
+
+  & .th,
+  & .td {
+    padding: 8px;
+    letter-spacing: 0.05em;
+  }
+}

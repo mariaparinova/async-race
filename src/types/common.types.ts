@@ -9,6 +9,12 @@ export interface Engine {
   distance: number;
 }
 
+export enum EngineStatus {
+  Started = 'started',
+  Drive = 'drive',
+  Stopped = 'stopped',
+}
+
 export interface Winner {
   id: number;
   wins: number;
