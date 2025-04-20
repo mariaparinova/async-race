@@ -131,7 +131,7 @@ export default class Track {
   createFinishEl() {
     const flagEl = document.createElement('img');
     flagEl.className = 'img';
-    flagEl.src = 'src/assets/icons/flag.svg';
+    flagEl.src = './icons/flag.svg';
     flagEl.alt = 'Finish icon';
 
     const finishAreaEl = document.createElement('div');
