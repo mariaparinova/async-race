@@ -318,7 +318,7 @@ export class GaragePage {
 
     const currentWinnerTrack = this.tracks.find((track) => track.car.id === +id);
 
-    this.renderRaceResult({ text: `${currentWinnerTrack?.car.name} went first [${event.elapsedTime}]s` });
+    this.renderRaceResult({ text: `${currentWinnerTrack?.car.name} went first [${event.elapsedTime.toFixed(2)}]s` });
 
     this.winnerId = +id;
     await this.addUpdateWinner({ id: this.winnerId, time: event.elapsedTime });

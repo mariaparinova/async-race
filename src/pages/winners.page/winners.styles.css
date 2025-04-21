@@ -10,6 +10,11 @@
   & .table {
     margin: 44px 8px 0;
     color: #b8b4b4;
+
+    & .wins,
+    & .time {
+      cursor: pointer;
+    }
   }
 
   & .pagination.btn-container {

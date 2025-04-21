@@ -210,9 +210,9 @@ export default class Track {
   }
 
   startCar() {
-    const duration = Math.round(this.engine.distance / 1000 / this.engine.velocity);
+    const duration = this.engine.distance / this.engine.velocity;
 
-    this.carEl.style.transition = `margin-left ${duration}s linear`;
+    this.carEl.style.transition = `margin-left ${duration}ms linear`;
     this.carEl.style.marginLeft = `${this.getDistance()}px`;
   }
 

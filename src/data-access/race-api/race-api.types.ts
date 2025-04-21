@@ -70,8 +70,8 @@ export interface UpdateWinnerRequestDto {
 }
 
 export interface GetWinnersParams {
-  page?: number;
-  limit?: number;
+  page: number;
+  limit: number;
   sort?: 'id' | 'wins' | 'time';
   order?: 'ASC' | 'DESC';
 }

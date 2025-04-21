@@ -63,7 +63,7 @@ export default class Pagination {
   updateTotalItemsAmount(amount: number) {
     this.totalItems = amount;
 
-    const totalItemsEl = this.detailsEl.querySelector('.cars .amount');
+    const totalItemsEl = this.detailsEl.querySelector('.amount');
 
     if (!(totalItemsEl instanceof HTMLElement)) {
       console.error('Can not find property "totalIitemsEl" during change pagination');
