@@ -1,5 +1,5 @@
 import './winners.styles.css';
-import winnersState, { winnersSelector } from '../../states/winners.state.ts';
+import winnersState, { SortBy, SortOrder, winnersSelector } from '../../states/winners.state.ts';
 import Pagination from '../../components/Pagination/Pagination.ts';
 import { CellData, Table } from '../../components/Table/Table.ts';
 import raceApiRepository from '../../data-access/race-api/race-api.repository.ts';
@@ -16,7 +16,7 @@ class WinnersPage {
 
   constructor() {
     this.pagination = new Pagination({
-      totalItems: winnersState.values.winners.length,
+      totalItems: 1,
       infoTitle: 'winners',
       itemsOnPage: 10,
       paginationCallbacks: {
@@ -29,8 +29,13 @@ class WinnersPage {
       { kindOfCell: 'th', cellContent: 'number', classes: '' },
       { kindOfCell: 'th', cellContent: 'car', classes: '' },
       { kindOfCell: 'th', cellContent: 'name', classes: '' },
-      { kindOfCell: 'th', cellContent: 'wins', classes: 'wins' },
-      { kindOfCell: 'th', cellContent: 'best time, sec', classes: 'time' },
+      { kindOfCell: 'th', cellContent: 'wins', classes: 'wins', onclickHandler: () => this.onHeaderClick('wins') },
+      {
+        kindOfCell: 'th',
+        cellContent: 'best time, sec',
+        classes: 'time',
+        onclickHandler: () => this.onHeaderClick('time'),
+      },
     ]);
 
     this.contentEl = this.table.tableEl;
@@ -42,15 +47,18 @@ class WinnersPage {
   }
 
   async renderWinners() {
-    const currentPageWinners = await winnersSelector({
+    const { winners, totalWinners } = await winnersSelector({
       page: this.pagination.currentPage,
       limit: this.pagination.itemsOnPage,
+      sort: winnersState.values.sortBy,
+      order: winnersState.values.sortOrder,
     });
+    this.pagination.updateTotalItemsAmount(totalWinners);
 
-    const carRequests = currentPageWinners.map((winner) => raceApiRepository.getCar({ id: winner.id }));
+    const carRequests = winners.map((winner) => raceApiRepository.getCar({ id: winner.id }));
     const cars = await Promise.all(carRequests);
 
-    const dataForTableCells = currentPageWinners.map((winner, index) => {
+    const dataForTableCells = winners.map((winner, index) => {
       const car = cars[index];
 
       const carElem = document.createElement('div');
@@ -61,14 +69,15 @@ class WinnersPage {
         { cellContent: `${index + 1}` },
         { cellContent: carElem },
         { cellContent: car.name },
-        { cellContent: winner.wins },
-        { cellContent: winner.time },
+        { cellContent: `${winner.wins}` },
+        { cellContent: `${winner.time.toFixed(2)}` },
       ];
     });
 
     const winnerCellElements = dataForTableCells.map((data) =>
       data.map((item: CellData) => this.table.getTableCellEl(item)),
     );
+
     const winnerRowsEl = winnerCellElements.map((cellEl) => this.table.getTableRowEl(cellEl));
 
     const tableBodyEl = this.contentEl.querySelector('tbody');
@@ -80,6 +89,28 @@ class WinnersPage {
 
     tableBodyEl.innerHTML = '';
     tableBodyEl.append(...winnerRowsEl);
+  }
+
+  private onHeaderClick(headerName: string) {
+    let sortOrder: SortOrder = SortOrder.Asc;
+    let sortBy;
+
+    switch (headerName) {
+      case 'wins':
+        sortBy = SortBy.Wins;
+        break;
+      case 'time':
+        sortBy = SortBy.Time;
+        break;
+      default:
+        return;
+    }
+
+    if (winnersState.values.sortBy === sortBy) {
+      sortOrder = winnersState.values.sortOrder === SortOrder.Asc ? SortOrder.Desc : SortOrder.Asc;
+    }
+
+    winnersState.updateState({ sortBy, sortOrder });
   }
 }
 

@@ -126,17 +126,9 @@ class RaceApiRepository {
     return carEngineStatus;
   }
 
-  async getWinners(params: GetWinnersParams): Promise<Winner[]> {
-    const searchParams = new URLSearchParams();
+  async getWinners(params: GetWinnersParams): Promise<{ winners: Winner[]; totalWinners: number }> {
     const { page, limit, sort, order } = params;
-
-    if (page) {
-      searchParams.set('_page', `${page}`);
-    }
-
-    if (limit) {
-      searchParams.set('_limit', `${limit}`);
-    }
+    const searchParams = new URLSearchParams({ _page: `${page}`, _limit: `${limit}` });
 
     if (sort) {
       searchParams.set('_sort', sort);
@@ -151,7 +143,13 @@ class RaceApiRepository {
       endpoint: `${winners}?${searchParams.toString()}`,
     });
 
-    return response.json();
+    const winnerItems = await response.json();
+    const totalWinnersStr = response.headers.get('X-Total-Count');
+
+    return {
+      winners: winnerItems,
+      totalWinners: totalWinnersStr ? +totalWinnersStr : winners.length,
+    };
   }
 
   async getWinner({ id }: GetWinnerParams): Promise<Winner> {

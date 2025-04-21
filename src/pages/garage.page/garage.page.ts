@@ -63,6 +63,7 @@ export class GaragePage {
 
   createRaceButton() {
     const onclickHandler = async () => {
+      this.winnerId = undefined;
       this.btnResetEl.disabled = true;
       this.btnRaceEl.disabled = true;
       this.tracks.forEach((track) => track.setCarToStartMode());
@@ -125,9 +126,15 @@ export class GaragePage {
         garageState.updateState({ carForUpdating: car });
       },
     };
+
     this.tracks = currentPageCars.map((car) => new Track(car, trackCallbacks));
 
     const trackElCollection = this.tracks.map((track) => track.createTrackEl());
+
+    const previousRaceResult = this.contentEl.querySelector('.race-result');
+    if (previousRaceResult) {
+      previousRaceResult.remove();
+    }
 
     this.contentEl.innerHTML = '';
     this.contentEl.append(...trackElCollection);
@@ -309,9 +316,13 @@ export class GaragePage {
       return;
     }
 
+    const currentWinnerTrack = this.tracks.find((track) => track.car.id === +id);
+
+    this.renderRaceResult({ text: `${currentWinnerTrack?.car.name} went first [${event.elapsedTime.toFixed(2)}]s` });
+
     this.winnerId = +id;
-    this.btnResetEl.disabled = false;
     await this.addUpdateWinner({ id: this.winnerId, time: event.elapsedTime });
+    this.btnResetEl.disabled = false;
   }
 
   async addUpdateWinner(props: Pick<WinnerDto, 'id' | 'time'>) {
@@ -331,6 +342,14 @@ export class GaragePage {
     if (!winnerData.id) {
       await raceApiRepository.createWinner({ id, time, wins: 1 });
     }
+  }
+
+  renderRaceResult({ text }: { text: string }) {
+    const resultEl = document.createElement('div');
+    resultEl.className = 'race-result';
+    resultEl.innerText = text;
+
+    this.contentEl.append(resultEl);
   }
 }
 
