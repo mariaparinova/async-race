@@ -1,0 +1,23 @@
+#app.winners {
+  background-color: #363636;
+}
+
+.winners {
+  & .details {
+    color: #ffffff;
+  }
+
+  & .table {
+    margin: 44px 8px 0;
+    color: #b8b4b4;
+
+    & .wins,
+    & .time {
+      cursor: pointer;
+    }
+  }
+
+  & .pagination.btn-container {
+    margin-top: 24px;
+  }
+}

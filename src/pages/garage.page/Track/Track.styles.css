@@ -1,0 +1,53 @@
+.track {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 8px 0;
+  background-color: #363636;
+  border-bottom: 2px dashed white;
+
+  & .start-area {
+    position: relative;
+
+    & .edit-btn {
+      margin-top: 7px;
+      color: #b7d6b5;
+
+      & > *:not(:first-child) {
+        margin-left: 8px;
+      }
+    }
+
+    & .car-container {
+      display: flex;
+      align-items: end;
+      margin-top: 8px;
+
+      & .car-action {
+        display: flex;
+        margin-bottom: 8px;
+
+        & .btn.stop {
+          margin-left: 8px;
+        }
+      }
+
+      & .start-point {
+        position: absolute;
+        left: 84px;
+        bottom: 0;
+      }
+
+      & .car-container-svg {
+        position: relative;
+        display: inline-block;
+      }
+    }
+  }
+
+  & .finish-area {
+    display: flex;
+    align-items: flex-end;
+    padding-right: 70px;
+  }
+}

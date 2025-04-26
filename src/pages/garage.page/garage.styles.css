@@ -1,0 +1,66 @@
+#app.garage {
+  background-color: #b7d6b5;
+}
+
+.garage {
+  position: relative;
+  margin-top: 12px;
+
+  .details {
+    color: #525252;
+  }
+
+  & .form {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    position: absolute;
+    top: 0;
+    left: 160px;
+    right: auto;
+
+    & .item-form {
+      display: flex;
+      align-items: flex-start;
+      width: fit-content;
+
+      &:nth-child(n + 2) {
+        margin-top: 8px;
+      }
+    }
+
+    & .item-form :nth-child(n + 2) {
+      margin-left: 6px;
+    }
+  }
+
+  .content {
+    position: relative;
+
+    & .race-result {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-weight: 600;
+      font-size: 48px;
+      color: #fffabd;
+      text-shadow: -1px -7px 7px rgba(233, 124, 0, 50);
+      background-color: rgba(0, 0, 0, 0.12);
+      -webkit-backdrop-filter: blur(1px);
+      backdrop-filter: blur(1px);
+    }
+  }
+}
+
+@media screen and (max-width: 660px) {
+  .garage .form {
+    left: auto;
+    right: 12px;
+  }
+}

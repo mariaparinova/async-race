@@ -38,11 +38,12 @@ export interface DeleteCarParams {
 
 export interface StartStopCarParams {
   id: number;
-  status: 'started' | 'stopped';
+  status: 'started' | 'drive' | 'stopped';
 }
 
-export interface SteCarToDriveModeParams {
+export interface SetCarToDriveModeParams {
   id: number;
+  status: 'started' | 'drive' | 'stopped';
 }
 
 export interface EngineDto {
@@ -69,8 +70,8 @@ export interface UpdateWinnerRequestDto {
 }
 
 export interface GetWinnersParams {
-  page?: number;
-  limit?: number;
+  page: number;
+  limit: number;
   sort?: 'id' | 'wins' | 'time';
   order?: 'ASC' | 'DESC';
 }

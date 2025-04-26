@@ -1,0 +1,17 @@
+.pagination.btn-container {
+  margin: 16px 12px 12px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  margin: 12px;
+  width: fit-content;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+
+  & > *:not(:first-child) {
+    margin-top: 4px;
+  }
+}

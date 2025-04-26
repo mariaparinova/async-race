@@ -1,6 +1,5 @@
 import { Car, Engine, Winner } from '../../types/common.types.ts';
 import {
-  CarDto,
   CreateCarRequestDto,
   CreateWinnerRequestDto,
   DeleteCarParams,
@@ -12,12 +11,13 @@ import {
   GetWinnersParams,
   RequestMethod,
   StartStopCarParams,
-  SteCarToDriveModeParams,
+  SetCarToDriveModeParams,
   UpdateCarRequestDto,
   UpdateWinnerRequestDto,
   WinnerDto,
 } from './race-api.types.ts';
 import { engine, garage, winners } from '../constansts.ts';
+import HttpStatusCode from '../../types/http.types.ts';
 
 class RaceApiRepository {
   private readonly baseUrl: string = import.meta.env.VITE_BASE_RACE_API_URL;
@@ -28,9 +28,7 @@ class RaceApiRepository {
       endpoint: `${garage}/${id}`,
     });
 
-    const carDto: CarDto = await response.json();
-
-    return this.convertCarDtoToCar(carDto);
+    return response.json();
   }
 
   async getCars({ page, limit }: GetCarsParams): Promise<Car[]> {
@@ -49,9 +47,7 @@ class RaceApiRepository {
       endpoint: `${garage}?${searchParams.toString()}`,
     });
 
-    const carsDto: CarDto[] = await response.json();
-
-    return carsDto.map((carDto) => this.convertCarDtoToCar(carDto));
+    return response.json();
   }
 
   async createCar(requestDto: CreateCarRequestDto): Promise<Car> {
@@ -61,24 +57,32 @@ class RaceApiRepository {
       body: requestDto,
     });
 
-    const carDto: CarDto = await response.json();
-
-    return this.convertCarDtoToCar(carDto);
+    return response.json();
   }
 
-  async deleteCar({ id }: DeleteCarParams) {
-    await this.#request({
+  async deleteCar({ id }: DeleteCarParams): Promise<void> {
+    const response = await this.#request({
       method: RequestMethod.Delete,
       endpoint: `${garage}/${id}`,
     });
+
+    if (response.status !== HttpStatusCode.Ok) {
+      throw new Error('response code !== 200');
+    }
   }
 
-  async updateCar(requestDto: UpdateCarRequestDto) {
-    await this.#request({
+  async updateCar(requestDto: UpdateCarRequestDto): Promise<Car> {
+    const response = await this.#request({
       method: RequestMethod.Put,
       endpoint: `${garage}/${requestDto.id}`,
       body: requestDto,
     });
+
+    if (response.status !== HttpStatusCode.Ok) {
+      throw new Error('response code !== 200');
+    }
+
+    return response.json();
   }
 
   async startStopCar({ id, status }: StartStopCarParams): Promise<Engine> {
@@ -99,28 +103,32 @@ class RaceApiRepository {
     };
   }
 
-  async setCarToDriveMode({ id }: SteCarToDriveModeParams) {
+  async setCarToDriveMode({ id }: SetCarToDriveModeParams) {
     const searchParams = new URLSearchParams();
     searchParams.set('id', `${id}`);
     searchParams.set('status', 'drive');
 
-    await this.#request({
+    const response = await this.#request({
       method: RequestMethod.Patch,
       endpoint: `${engine}?${searchParams.toString()}`,
     });
+
+    if (response.status === HttpStatusCode.TooManyRequests) {
+      throw new Error('Drive already in progress');
+    }
+
+    if (response.status === HttpStatusCode.NotFound) {
+      throw new Error('Set engine status to "started" before');
+    }
+
+    const carEngineStatus: Record<'success', boolean> = await response.json();
+
+    return carEngineStatus;
   }
 
-  async getWinners(params: GetWinnersParams): Promise<Winner[]> {
-    const searchParams = new URLSearchParams();
+  async getWinners(params: GetWinnersParams): Promise<{ winners: Winner[]; totalWinners: number }> {
     const { page, limit, sort, order } = params;
-
-    if (page) {
-      searchParams.set('_page', `${page}`);
-    }
-
-    if (limit) {
-      searchParams.set('_limit', `${limit}`);
-    }
+    const searchParams = new URLSearchParams({ _page: `${page}`, _limit: `${limit}` });
 
     if (sort) {
       searchParams.set('_sort', sort);
@@ -135,9 +143,13 @@ class RaceApiRepository {
       endpoint: `${winners}?${searchParams.toString()}`,
     });
 
-    const winnersDto: WinnerDto[] = await response.json();
+    const winnerItems = await response.json();
+    const totalWinnersStr = response.headers.get('X-Total-Count');
 
-    return winnersDto.map((winner) => this.convertWinnerDtoToWinner(winner));
+    return {
+      winners: winnerItems,
+      totalWinners: totalWinnersStr ? +totalWinnersStr : winners.length,
+    };
   }
 
   async getWinner({ id }: GetWinnerParams): Promise<Winner> {
@@ -146,9 +158,7 @@ class RaceApiRepository {
       endpoint: `${winners}/${id}`,
     });
 
-    const winnerDto: WinnerDto = await response.json();
-
-    return this.convertWinnerDtoToWinner(winnerDto);
+    return response.json();
   }
 
   async createWinner(requestDto: CreateWinnerRequestDto) {
@@ -159,23 +169,24 @@ class RaceApiRepository {
     });
 
     const winnerDto: WinnerDto = await response.json();
-
-    return this.convertWinnerDtoToWinner(winnerDto);
+    return winnerDto;
   }
 
   async deleteWinner({ id }: DeleteWinnerParams) {
-    await this.#request({
+    return this.#request({
       method: RequestMethod.Delete,
       endpoint: `${winners}/${id}`,
     });
   }
 
-  async updateWinner(requestDto: UpdateWinnerRequestDto) {
-    await this.#request({
+  async updateWinner(requestDto: UpdateWinnerRequestDto): Promise<Winner> {
+    const response = await this.#request({
       method: RequestMethod.Put,
       endpoint: `${winners}/${requestDto.id}`,
       body: requestDto,
     });
+
+    return response.json();
   }
 
   async #request(params: {
@@ -200,25 +211,11 @@ class RaceApiRepository {
         body: bodyStr,
       });
     } catch (err) {
-      console.error(`Error during request method ${method}, URL ${url}`);
+      if (err instanceof Error) {
+        console.error(`Error during request method ${method}, URL ${url}, Error message: ${err.message}`);
+      }
       throw err;
     }
-  }
-
-  private convertCarDtoToCar(carDto: CarDto): Car {
-    return {
-      id: carDto.id,
-      name: carDto.name,
-      color: carDto.color,
-    };
-  }
-
-  private convertWinnerDtoToWinner(winnerDto: WinnerDto): Winner {
-    return {
-      id: winnerDto.id,
-      wins: winnerDto.wins,
-      time: winnerDto.time,
-    };
   }
 }
 
