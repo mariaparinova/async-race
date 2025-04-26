@@ -97,13 +97,7 @@ export default class Pagination {
   btnOnclickHandler(event: Event) {
     const callbacks = this.paginationCallbacks;
     const currentPageNumber = this.currentPage;
-
-    const btnEl = event.target;
-
-    if (!(btnEl instanceof HTMLButtonElement)) {
-      console.error('can not find "buttonElem" during change pagination');
-      return;
-    }
+    const btnEl = <HTMLButtonElement>event.target;
 
     if (btnEl.classList.contains('previous')) {
       this.updateCurrentPageNumber(currentPageNumber - 1);

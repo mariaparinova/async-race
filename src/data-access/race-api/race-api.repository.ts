@@ -211,7 +211,9 @@ class RaceApiRepository {
         body: bodyStr,
       });
     } catch (err) {
-      console.error(`Error during request method ${method}, URL ${url}`);
+      if (err instanceof Error) {
+        console.error(`Error during request method ${method}, URL ${url}, Error message: ${err.message}`);
+      }
       throw err;
     }
   }

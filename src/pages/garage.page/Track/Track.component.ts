@@ -3,6 +3,7 @@ import { Car, Engine, EngineStatus } from '../../../types/common.types.ts';
 import Button from '../../../components/Button/Button.component.ts';
 import raceApiRepository from '../../../data-access/race-api/race-api.repository.ts';
 import IconCar from '../../../components/Icon-car/Icon-Car.ts';
+import TrackErrors from './Track.types.ts';
 
 export interface TrackCallbacks {
   onSelectCar?: (car: Car) => void;
@@ -142,9 +143,7 @@ export default class Track {
   }
 
   createTrackEl() {
-    this.trackEl.append(this.createStartEl());
-    this.trackEl.append(this.createFinishEl());
-
+    this.trackEl.append(this.createStartEl(), this.createFinishEl());
     return this.trackEl;
   }
 
@@ -183,19 +182,18 @@ export default class Track {
 
     try {
       engineResponse = await raceApiRepository.setCarToDriveMode({ id, status: statusDrive });
-    } catch (err: unknown) {
-      if (!(err instanceof Error)) {
+    } catch (err) {
+      if (err instanceof Error) {
         console.error(`Type: "${err}" is not instance of Error`);
-        return;
-      }
 
-      if (err.message === 'Drive already in progress') {
-        return;
-      }
+        if (err.message === TrackErrors.InProgress) {
+          return;
+        }
 
-      if (err.message === 'Set engine status to "started" before') {
-        await raceApiRepository.startStopCar({ id, status: EngineStatus.Started });
-        engineResponse = await raceApiRepository.setCarToDriveMode({ id, status: statusDrive });
+        if (err.message === TrackErrors.SetEngine) {
+          await raceApiRepository.startStopCar({ id, status: EngineStatus.Started });
+          engineResponse = await raceApiRepository.setCarToDriveMode({ id, status: statusDrive });
+        }
       }
     }
 

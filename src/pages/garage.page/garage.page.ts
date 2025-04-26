@@ -9,6 +9,7 @@ import { Car } from '../../types/common.types.ts';
 import getRandomHexColor from '../../helpers/getRandomColor.ts';
 import carBrands from '../../assets/storage/brands.ts';
 import { CreateCarRequestDto, WinnerDto } from '../../data-access/race-api/race-api.types.ts';
+import getRandomCarBrand from '../../helpers/getRandomCarBrand.ts';
 
 export class GaragePage {
   garagePageEl: HTMLElement;
@@ -209,7 +210,7 @@ export class GaragePage {
         isDisabled: true,
       });
 
-      const OnclickHandler = async () => {
+      const onclickHandler = async () => {
         const { carForUpdating } = garageState.values;
         const inputNameEl = this.formEl.querySelector('.input.update');
         const updatedName =
@@ -229,7 +230,7 @@ export class GaragePage {
         garageState.values.updateCars[indexOfCar] = updatedCar;
         this.updateTrack(updatedCar);
       };
-      const btnUpdateCar = Button({ text: 'update', classes: ['update'], onClick: OnclickHandler, isDisabled: true });
+      const btnUpdateCar = Button({ text: 'update', classes: ['update'], onClick: onclickHandler, isDisabled: true });
 
       const itemFormUpdateEl = document.createElement('div');
       itemFormUpdateEl.className = 'item-form update';
@@ -273,7 +274,7 @@ export class GaragePage {
 
       for (let i = 0; i < 100; i += 1) {
         cars.push({
-          name: carBrands[Math.floor(Math.random() * carBrands.length)],
+          name: getRandomCarBrand(),
           color: getRandomHexColor(),
         });
       }
