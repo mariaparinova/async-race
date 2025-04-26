@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
-  --font-inter: Inter, Roboto;
+  --font-inter: Inter, Roboto, sans-serif;
   --bg-color-light: #f6f6f6;
   --bg-color-dark: #cdcdcd;
 }
@@ -18,7 +18,7 @@
   margin: auto;
   max-width: 1040px;
   min-height: 100vh;
-  font-family: var(--font-inter), serif;
+  font-family: var(--font-inter);
 
   & .main {
     flex-grow: 1;

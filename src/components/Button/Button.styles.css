@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-family: var(--font-inter), serif;
+  font-family: var(--font-inter);
   font-weight: 600;
   font-size: 14px;
   border-radius: 4px;
